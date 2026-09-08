@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FiveM Skin Studio</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="title-block">
+    <span>FiveM Skin Studio</span>
+    <span id="project-tag" class="project-tag mono" hidden>
+      <span class="dot"></span>
+      <span id="project-tag-name"></span>
+    </span>
+    <span>Rev 01</span>
+  </div>
+
+  <main class="screen">
+    <span class="reg-mark reg-tl"></span>
+    <span class="reg-mark reg-tr"></span>
+    <span class="reg-mark reg-bl"></span>
+    <span class="reg-mark reg-br"></span>
+
+    <section id="view-landing" class="view hero">
+      <h1 class="hero-heading">Build your <span class="accent">skin</span>, start to finish</h1>
+      <p class="hero-sub">Upload a template, place your logo, pick your colors — all in the browser, no OpenIV required.</p>
+      <button type="button" class="btn btn-primary" id="start-btn">Start project</button>
+    </section>
+
+    <section id="view-choice" class="view" hidden>
+      <h2 class="choice-heading">How do you want to start?</h2>
+      <div class="choice-grid">
+        <button type="button" class="choice-card" id="choice-upload">
+          <svg class="choice-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3v12"></path>
+            <path d="M7 8l5-5 5 5"></path>
+            <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"></path>
+          </svg>
+          <span class="choice-title">Upload a template</span>
+          <span class="choice-sub">Add a new PNG from your computer.</span>
+        </button>
+        <button type="button" class="choice-card" id="choice-existing">
+          <svg class="choice-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+            <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+            <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+            <rect x="14" y="14" width="7" height="7" rx="1"></rect>
+          </svg>
+          <span class="choice-title">Choose existing template</span>
+          <span class="choice-sub">Pick one you've already uploaded.</span>
+        </button>
+      </div>
+      <button type="button" class="back-link" data-back="landing">&larr; Back</button>
+    </section>
+
+    <section id="view-upload" class="view" hidden>
+      <h2 class="panel-heading">Upload template</h2>
+      <form id="upload-form" class="upload-form" novalidate>
+        <label class="field">
+          <span class="field-label">Template name</span>
+          <input type="text" id="template-name" name="name" placeholder="e.g. Male vest" />
+        </label>
+
+        <label class="field">
+          <span class="field-label">PNG file</span>
+          <input type="file" id="template-file" name="template" accept=".png,image/png" required />
+        </label>
+
+        <div class="actions">
+          <button type="submit" class="btn btn-primary" id="upload-btn">Upload</button>
+          <button type="reset" class="btn btn-secondary">Clear</button>
+        </div>
+      </form>
+      <p id="upload-status" class="status" role="status" aria-live="polite"></p>
+      <button type="button" class="btn btn-primary reveal-btn" id="upload-continue-btn" hidden>Continue to editor</button>
+      <button type="button" class="back-link" data-back="choice">&larr; Back</button>
+    </section>
+
+    <section id="view-existing" class="view" hidden>
+      <h2 class="panel-heading">Choose a template</h2>
+      <ul id="templates-list" class="templates-list"></ul>
+      <p id="templates-empty" class="empty-state">No templates uploaded yet.</p>
+      <p id="selection-status" class="status" role="status" aria-live="polite"></p>
+      <button type="button" class="btn btn-primary reveal-btn" id="existing-continue-btn" hidden>Continue</button>
+      <button type="button" class="back-link" data-back="choice">&larr; Back</button>
+    </section>
+
+    <section id="view-edits" class="view" hidden>
+      <h2 class="panel-heading" id="edits-heading">Choose a skin</h2>
+      <div class="choice-grid" id="edits-grid">
+        <button type="button" class="choice-card" id="new-edit-card">
+          <svg class="choice-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 5v14"></path>
+            <path d="M5 12h14"></path>
+          </svg>
+          <span class="choice-title">Start a new skin</span>
+          <span class="choice-sub">Begin a fresh edit from this template.</span>
+        </button>
+      </div>
+      <button type="button" class="back-link" data-back="existing">&larr; Back</button>
+    </section>
+
+    <section id="view-editor" class="view" hidden>
+      <h2 class="panel-heading">Edit template</h2>
+
+      <label class="field skin-name-row">
+        <span class="field-label">Skin name</span>
+        <input type="text" id="skin-name-input" placeholder="e.g. Blue crew" />
+      </label>
+
+      <div class="workspace-body">
+        <div class="canvas-pane" id="canvas-pane">
+          <div class="zoom-controls">
+            <button type="button" class="zoom-btn" id="zoom-out-btn" aria-label="Zoom out">&minus;</button>
+            <button type="button" class="zoom-level" id="zoom-level-btn" title="Reset zoom">100%</button>
+            <button type="button" class="zoom-btn" id="zoom-in-btn" aria-label="Zoom in">+</button>
+          </div>
+          <div class="canvas-stage">
+            <div class="canvas-surface" id="canvas-surface">
+              <div class="fabric-layer" id="fabric-layer">
+                <img id="editor-preview" class="editor-preview" alt="" />
+                <div class="color-tint" id="color-tint"></div>
+                <div class="color-overlay" id="color-overlay"></div>
+                <div class="grain-layer" id="grain-layer"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar">
+          <div class="tool-section">
+            <h3 class="tool-heading">Base color</h3>
+            <div class="swatch-row">
+              <button type="button" class="color-swatch" data-color="#c1662e" style="background:#c1662e"></button>
+              <button type="button" class="color-swatch" data-color="#2b5c8a" style="background:#2b5c8a"></button>
+              <button type="button" class="color-swatch" data-color="#1a7f37" style="background:#1a7f37"></button>
+              <button type="button" class="color-swatch" data-color="#16202b" style="background:#16202b"></button>
+              <button type="button" class="color-swatch" data-color="#e7edf2" style="background:#e7edf2"></button>
+              <input type="color" id="custom-color" class="color-swatch custom" value="#c1662e" title="Custom color" />
+            </div>
+            <div class="range-row">
+              <label for="intensity-input">
+                <span>Intensity</span>
+                <span id="intensity-value">0%</span>
+              </label>
+              <input type="range" id="intensity-input" min="0" max="100" value="0" />
+            </div>
+          </div>
+
+          <div class="tool-section">
+            <h3 class="tool-heading">Adjustments</h3>
+            <div class="range-row">
+              <label for="fade-input">
+                <span>Fade</span>
+                <span id="fade-value">0%</span>
+              </label>
+              <input type="range" id="fade-input" min="0" max="100" value="0" />
+            </div>
+            <div class="range-row">
+              <label for="grain-input">
+                <span>Texture</span>
+                <span id="grain-value">0%</span>
+              </label>
+              <div class="size-row" id="texture-row">
+                <button type="button" class="size-option texture-option active" data-texture="grain">Grain</button>
+                <button type="button" class="size-option texture-option" data-texture="weave">Weave</button>
+                <button type="button" class="size-option texture-option" data-texture="scuffed">Scuffed</button>
+              </div>
+              <input type="range" id="grain-input" min="0" max="100" value="0" />
+            </div>
+          </div>
+
+          <div class="tool-section">
+            <h3 class="tool-heading">Logo</h3>
+            <input type="file" id="logo-input" accept=".png,image/png" hidden />
+            <div class="dropzone" id="logo-dropzone">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3v12"></path>
+                <path d="M7 8l5-5 5 5"></path>
+                <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"></path>
+              </svg>
+              <span>Drop a PNG or click to upload</span>
+            </div>
+            <div class="logo-chip" id="logo-chip" hidden>
+              <div class="logo-chip-thumb">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12,2 21,7 21,17 12,22 3,17 3,7"></polygon></svg>
+              </div>
+              <span class="logo-chip-name" id="logo-chip-name"></span>
+              <button type="button" class="logo-chip-remove" id="logo-remove">Remove</button>
+            </div>
+            <p class="tool-hint">Drag the logo on the template to reposition it, or use the corner handles to resize.</p>
+
+            <div class="ai-prompt-block">
+              <p class="tool-hint">Need a logo? Copy this prompt into your AI tool of choice.</p>
+              <pre class="ai-prompt-preview" id="ai-prompt-preview">Loading prompt...</pre>
+              <button type="button" class="btn btn-secondary" id="copy-prompt-btn">Copy prompt</button>
+              <p id="copy-prompt-status" class="status" role="status" aria-live="polite"></p>
+            </div>
+          </div>
+
+          <div class="tool-section">
+            <h3 class="tool-heading">Canvas size</h3>
+            <div class="size-inputs">
+              <label class="size-field">
+                <span>Width</span>
+                <input type="number" id="size-width-input" min="16" max="8192" step="1" />
+              </label>
+              <span class="size-x">&times;</span>
+              <label class="size-field">
+                <span>Height</span>
+                <input type="number" id="size-height-input" min="16" max="8192" step="1" />
+              </label>
+            </div>
+            <div class="size-row">
+              <button type="button" class="size-option" data-w="2048" data-h="1024">2048 &times; 1024</button>
+              <button type="button" class="size-option" data-w="2048" data-h="2048">2048 &times; 2048</button>
+            </div>
+            <p class="tool-hint" id="size-hint"></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="save-row">
+        <button type="button" class="btn btn-primary" id="save-btn">Save skin</button>
+        <button type="button" class="btn btn-secondary" id="download-btn">Download PNG</button>
+        <p id="save-status" class="status" role="status" aria-live="polite"></p>
+      </div>
+
+      <button type="button" class="back-link" data-back="choice">&larr; Back</button>
+    </section>
+  </main>
+
+  <script src="main.js"></script>
+</body>
+</html>

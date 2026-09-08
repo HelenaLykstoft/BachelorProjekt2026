@@ -1,0 +1,227 @@
+{
+  "main": {
+    "id": "2201a223b1b38fb0",
+    "type": "split",
+    "children": [
+      {
+        "id": "17e6c828891a2505",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "ac5bb96b8860474c",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Models etc/User stories.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "User stories"
+            }
+          },
+          {
+            "id": "04e38d45dc11bac8",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Models etc/User stories.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "User stories"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "c24fe4c4b71af404",
+    "type": "split",
+    "children": [
+      {
+        "id": "84f485b08c0c1551",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "c42f31634d84d212",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "fc63d99f2c906bf6",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Søg"
+            }
+          },
+          {
+            "id": "23dce9ed4361f428",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-bookmark",
+              "title": "Bogmærker"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "798f71951c6cbd47",
+    "type": "split",
+    "children": [
+      {
+        "id": "973b5d93acd82eb2",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "f8c95cb10b7ecc61",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Versions/V1, the basics.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks"
+            }
+          },
+          {
+            "id": "639ee322662f207a",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "Velkommen.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Udgående links"
+            }
+          },
+          {
+            "id": "cbdd794f4a55154d",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "287fe10851243300",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "Alle egenskaber"
+            }
+          },
+          {
+            "id": "0eb3e4695f0913f6",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Velkommen.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Disposition"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "claude-code-mcp:Toggle Claude Terminal": false,
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "ac5bb96b8860474c",
+  "lastOpenFiles": [
+    "Versions/V1, the basics.md",
+    "Pasted image 20260810113426.png",
+    "Ideas and thoughts.md",
+    "Models etc/User stories.md",
+    "Models etc",
+    "Meetings/Meeting 10-08.md",
+    "Untitled.canvas",
+    "Test.md",
+    "Versions",
+    "Meetings",
+    "Velkommen.md",
+    "obsidian/plugins/obsidian-claude-code-mcp/styles 1.css",
+    "obsidian/plugins/obsidian-claude-code-mcp/main.js",
+    "obsidian/plugins/obsidian-claude-code-mcp/manifest.json",
+    "obsidian/plugins/obsidian-claude-code-mcp/styles.css",
+    "obsidian/plugins/obsidian-claude-code-mcp",
+    "obsidian/plugins",
+    "obsidian"
+  ]
+}
