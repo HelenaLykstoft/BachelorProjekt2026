@@ -4,16 +4,27 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FiveM Skin Studio</title>
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem('theme') === 'light') {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      } catch (e) {}
+    })();
+  </script>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="title-block">
     <span>FiveM Skin Studio</span>
-    <span id="project-tag" class="project-tag mono" hidden>
-      <span class="dot"></span>
-      <span id="project-tag-name"></span>
-    </span>
-    <span>Rev 01</span>
+    <div class="title-block-right">
+      <span id="project-tag" class="project-tag mono" hidden>
+        <span id="project-tag-name"></span>
+      </span>
+      <button type="button" class="theme-toggle mono" id="theme-toggle" aria-pressed="false">Light mode</button>
+      <span>Rev 01</span>
+    </div>
   </div>
 
   <main class="screen">
@@ -32,7 +43,7 @@
       <h2 class="choice-heading">How do you want to start?</h2>
       <div class="choice-grid">
         <button type="button" class="choice-card" id="choice-upload">
-          <svg class="choice-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <svg class="choice-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 3v12"></path>
             <path d="M7 8l5-5 5 5"></path>
             <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"></path>
@@ -41,7 +52,7 @@
           <span class="choice-sub">Add a new PNG from your computer.</span>
         </button>
         <button type="button" class="choice-card" id="choice-existing">
-          <svg class="choice-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <svg class="choice-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="3" y="3" width="7" height="7" rx="1"></rect>
             <rect x="14" y="3" width="7" height="7" rx="1"></rect>
             <rect x="3" y="14" width="7" height="7" rx="1"></rect>
@@ -90,7 +101,7 @@
       <h2 class="panel-heading" id="edits-heading">Choose a skin</h2>
       <div class="choice-grid" id="edits-grid">
         <button type="button" class="choice-card" id="new-edit-card">
-          <svg class="choice-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <svg class="choice-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 5v14"></path>
             <path d="M5 12h14"></path>
           </svg>
@@ -132,12 +143,12 @@
           <div class="tool-section">
             <h3 class="tool-heading">Base color</h3>
             <div class="swatch-row">
-              <button type="button" class="color-swatch" data-color="#c1662e" style="background:#c1662e"></button>
-              <button type="button" class="color-swatch" data-color="#2b5c8a" style="background:#2b5c8a"></button>
-              <button type="button" class="color-swatch" data-color="#1a7f37" style="background:#1a7f37"></button>
-              <button type="button" class="color-swatch" data-color="#16202b" style="background:#16202b"></button>
-              <button type="button" class="color-swatch" data-color="#e7edf2" style="background:#e7edf2"></button>
-              <input type="color" id="custom-color" class="color-swatch custom" value="#c1662e" title="Custom color" />
+              <button type="button" class="color-swatch" data-color="#3c5670" style="background:#3c5670"></button>
+              <button type="button" class="color-swatch" data-color="#f6891f" style="background:#f6891f"></button>
+              <button type="button" class="color-swatch" data-color="#2F343C" style="background:#2F343C"></button>
+              <button type="button" class="color-swatch" data-color="#b3b3b3" style="background:#b3b3b3"></button>
+              <button type="button" class="color-swatch" data-color="#ffffff" style="background:#ffffff"></button>
+              <input type="color" id="custom-color" class="color-swatch custom" value="#3c5670" title="Custom color" />
             </div>
             <div class="range-row">
               <label for="intensity-input">
@@ -175,7 +186,7 @@
             <h3 class="tool-heading">Logo</h3>
             <input type="file" id="logo-input" accept=".png,image/png" hidden />
             <div class="dropzone" id="logo-dropzone">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M12 3v12"></path>
                 <path d="M7 8l5-5 5 5"></path>
                 <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"></path>
@@ -184,7 +195,7 @@
             </div>
             <div class="logo-chip" id="logo-chip" hidden>
               <div class="logo-chip-thumb">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12,2 21,7 21,17 12,22 3,17 3,7"></polygon></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="12,2 21,7 21,17 12,22 3,17 3,7"></polygon></svg>
               </div>
               <span class="logo-chip-name" id="logo-chip-name"></span>
               <button type="button" class="logo-chip-remove" id="logo-remove">Remove</button>

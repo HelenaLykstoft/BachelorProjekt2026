@@ -10,6 +10,29 @@ const views = {
 const screenEl = document.querySelector('.screen');
 const titleBlockEl = document.querySelector('.title-block');
 
+/* ---- Theme toggle (dark by default) ---- */
+const themeToggleBtn = document.getElementById('theme-toggle');
+
+function updateThemeToggleLabel() {
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+  themeToggleBtn.textContent = isLight ? 'Dark mode' : 'Light mode';
+  themeToggleBtn.setAttribute('aria-pressed', String(isLight));
+}
+
+themeToggleBtn.addEventListener('click', () => {
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+  if (isLight) {
+    document.documentElement.removeAttribute('data-theme');
+    localStorage.setItem('theme', 'dark');
+  } else {
+    document.documentElement.setAttribute('data-theme', 'light');
+    localStorage.setItem('theme', 'light');
+  }
+  updateThemeToggleLabel();
+});
+
+updateThemeToggleLabel();
+
 function showView(name) {
   Object.entries(views).forEach(([key, el]) => {
     el.hidden = key !== name;
@@ -230,7 +253,7 @@ async function openEditor(template, skin) {
   grainLayerEl.style.webkitMaskImage = `url(${template.url})`;
   grainLayerEl.style.maskImage = `url(${template.url})`;
 
-  setTintColor('#c1662e');
+  setTintColor('#3c5670');
   intensityInput.value = 0;
   applyIntensity();
   setActiveSwatch('');
@@ -284,7 +307,7 @@ const intensityValueEl = document.getElementById('intensity-value');
 const customColorInput = document.getElementById('custom-color');
 const swatchButtons = document.querySelectorAll('.color-swatch[data-color]');
 
-let currentColorHex = '#c1662e';
+let currentColorHex = '#3c5670';
 
 function setActiveSwatch(color) {
   swatchButtons.forEach((btn) => {
@@ -299,14 +322,18 @@ function setTintColor(color) {
   setActiveSwatch(color);
 }
 
-// Below 50% intensity this is a pure "color" blend (recolors while keeping
-// the template's own shading/folds). Above 50%, a solid "normal" blend
-// overlay fades in on top so 100% reaches a flat, fully opaque color
-// (e.g. true white) instead of staying a see-through tint forever.
+// The "color" blend tint preserves the template's own shading/folds, but
+// that means it preserves luminosity too — on a near-black or near-white
+// template it stays invisible no matter the opacity, since there's no
+// shading left to recolor. The "normal" blend overlay doesn't have that
+// problem (it mixes in real color regardless of backdrop luminosity), so it
+// now ramps in across the whole 0-100% range instead of only above 50%,
+// squared so it still stays gentle at low intensity and only fully takes
+// over — reaching a flat, fully opaque color, e.g. true white — at 100%.
 function applyIntensity() {
   const value = Number(intensityInput.value);
   colorTintEl.style.opacity = String(value / 100);
-  colorOverlayEl.style.opacity = String(Math.max(0, value - 50) / 50);
+  colorOverlayEl.style.opacity = String((value / 100) ** 2);
   intensityValueEl.textContent = `${value}%`;
 }
 
@@ -802,7 +829,7 @@ async function renderSkinToCanvas() {
     layerCtx.fillStyle = currentColorHex;
     layerCtx.fillRect(0, 0, width, height);
   });
-  compositeMaskedLayer(ctx, templateImg, width, height, Math.max(0, intensity - 50) / 50, 'source-over', (layerCtx) => {
+  compositeMaskedLayer(ctx, templateImg, width, height, (intensity / 100) ** 2, 'source-over', (layerCtx) => {
     layerCtx.fillStyle = currentColorHex;
     layerCtx.fillRect(0, 0, width, height);
   });

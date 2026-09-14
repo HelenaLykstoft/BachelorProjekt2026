@@ -1,17 +1,61 @@
+@font-face {
+  font-family: "IBM Plex Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("fonts/ibm-plex-sans-400.woff2") format("woff2");
+}
+@font-face {
+  font-family: "IBM Plex Sans";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("fonts/ibm-plex-sans-500.woff2") format("woff2");
+}
+@font-face {
+  font-family: "IBM Plex Sans";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("fonts/ibm-plex-sans-600.woff2") format("woff2");
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("fonts/ibm-plex-mono-500.woff2") format("woff2");
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("fonts/ibm-plex-mono-600.woff2") format("woff2");
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("fonts/ibm-plex-mono-700.woff2") format("woff2");
+}
+
 :root {
-  --ground: #eef2f5;
-  --surface: #ffffff;
-  --ink: #16202b;
-  --muted: #5c6b78;
-  --line-blue: #2b5c8a;
-  --line-blue-soft: #2b5c8a33;
-  --copper: #c1662e;
-  --copper-deep: #9c4e22;
-  --copper-soft: #c1662e1f;
-  --border: #ccd7de;
-  --focus: #2b5c8a;
-  --color-success: #1a7f37;
-  --color-error: #c2263d;
+  /* Dark is the default theme — see .theme-toggle in main.js */
+  --ground: #2f343c;
+  --surface: #383e46;
+  --ink: #f2f3f4;
+  --muted: #b3b3b3;
+  --accent1: #8fa8bd;
+  --accent1-soft: #8fa8bd33;
+  --accent2: #f6891f;
+  --accent2-deep: #ffa64d;
+  --accent2-soft: #f6891f26;
+  --border: #454c55;
+  --focus: var(--accent1);
+  --color-success: #3fbf62;
+  --color-error: #e2495f;
   --space-1: 8px;
   --space-2: 16px;
   --space-3: 24px;
@@ -19,20 +63,20 @@
   --space-5: 40px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --ground: #0e1620;
-    --surface: #16202c;
-    --ink: #e7edf2;
-    --muted: #8ca0b3;
-    --line-blue: #6fa8d6;
-    --line-blue-soft: #6fa8d640;
-    --copper: #e2884a;
-    --copper-deep: #f2a46b;
-    --copper-soft: #e2884a26;
-    --border: #2a3947;
-    --focus: #6fa8d6;
-  }
+:root[data-theme="light"] {
+  --ground: #eef2f6;
+  --surface: #ffffff;
+  --ink: #2F343C;
+  --muted: #6f7885;
+  --accent1: #3c5670;
+  --accent1-soft: #3c567033;
+  --accent2: #f6891f;
+  --accent2-deep: #d9740f;
+  --accent2-soft: #f6891f1f;
+  --border: #d6dee5;
+  --focus: var(--accent1);
+  --color-success: #1a7f37;
+  --color-error: #c2263d;
 }
 
 * {
@@ -43,7 +87,7 @@ body {
   margin: 0;
   background: var(--ground);
   color: var(--ink);
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   padding: var(--space-4) var(--space-3) var(--space-5);
 }
 
@@ -52,7 +96,7 @@ body {
 .hero-heading,
 .choice-heading,
 .panel-heading {
-  font-family: ui-monospace, "Cascadia Code", "SF Mono", Consolas, monospace;
+  font-family: "IBM Plex Mono", ui-monospace, "Cascadia Code", "SF Mono", Consolas, monospace;
 }
 
 .title-block {
@@ -68,27 +112,53 @@ body {
   border-bottom: 1px solid var(--border);
 }
 
+.title-block-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.theme-toggle {
+  appearance: none;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  padding: 3px 8px;
+  cursor: pointer;
+}
+
+.theme-toggle:hover {
+  border-color: var(--accent1);
+  color: var(--accent1);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.theme-toggle:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .project-tag {
   display: flex;
   align-items: center;
-  gap: 6px;
   color: var(--ink);
   font-weight: 600;
-  background: var(--copper-soft);
-  border: 1px solid var(--copper);
-  padding: 2px 10px;
-  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--accent2);
+  border-left-width: 3px;
+  padding: 3px 10px 3px 8px;
+  border-radius: 2px;
 }
 
 .project-tag[hidden] {
   display: none;
-}
-
-.project-tag .dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--copper);
 }
 
 .screen {
@@ -96,7 +166,7 @@ body {
   max-width: 720px;
   margin: 0 auto;
   background:
-    radial-gradient(circle, var(--line-blue-soft) 1px, transparent 1px),
+    radial-gradient(circle, var(--accent1-soft) 1px, transparent 1px),
     var(--surface);
   background-size: 24px 24px;
   border: 1px solid var(--border);
@@ -113,24 +183,24 @@ body {
   max-width: 1320px;
 }
 
+/* Pattern notch — the triangle a tailor snips into a paper pattern to line up seams */
 .reg-mark {
   position: absolute;
-  width: 16px;
-  height: 16px;
-  border: 1.5px solid var(--line-blue);
-  opacity: 0.5;
+  width: 11px;
+  height: 11px;
+  opacity: 0.6;
 }
-.reg-mark::before, .reg-mark::after {
+.reg-mark::before {
   content: "";
   position: absolute;
-  background: var(--line-blue);
+  inset: 0;
+  background: var(--accent1);
+  clip-path: polygon(0 0, 100% 0, 0 100%);
 }
-.reg-mark::before { top: 50%; left: -4px; right: -4px; height: 1px; transform: translateY(-50%); }
-.reg-mark::after { left: 50%; top: -4px; bottom: -4px; width: 1px; transform: translateX(-50%); }
 .reg-tl { top: var(--space-2); left: var(--space-2); }
-.reg-tr { top: var(--space-2); right: var(--space-2); }
-.reg-bl { bottom: var(--space-2); left: var(--space-2); }
-.reg-br { bottom: var(--space-2); right: var(--space-2); }
+.reg-tr { top: var(--space-2); right: var(--space-2); transform: scaleX(-1); }
+.reg-bl { bottom: var(--space-2); left: var(--space-2); transform: scaleY(-1); }
+.reg-br { bottom: var(--space-2); right: var(--space-2); transform: scale(-1); }
 
 .view {
   display: flex;
@@ -156,7 +226,7 @@ body {
 }
 
 .hero-heading .accent {
-  color: var(--copper);
+  color: var(--accent2);
 }
 
 .hero-sub {
@@ -184,7 +254,7 @@ body {
   appearance: none;
   text-align: left;
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: 1.5px dashed var(--border);
   border-radius: 6px;
   padding: var(--space-3);
   display: flex;
@@ -197,7 +267,7 @@ body {
 }
 
 .choice-card:hover {
-  border-color: var(--copper);
+  border-color: var(--accent2);
   transform: translateY(-2px);
 }
 
@@ -209,11 +279,11 @@ body {
 .choice-icon {
   width: 32px;
   height: 32px;
-  color: var(--line-blue);
+  color: var(--accent1);
 }
 
 .choice-card:hover .choice-icon {
-  color: var(--copper);
+  color: var(--accent2);
 }
 
 .choice-title {
@@ -290,13 +360,13 @@ body {
 }
 
 .btn-primary {
-  background: var(--copper);
+  background: var(--accent2);
   color: #fff9f5;
-  box-shadow: 0 1px 0 var(--copper-deep) inset, 0 4px 12px var(--copper-soft);
+  box-shadow: 0 1px 0 var(--accent2-deep) inset, 0 4px 12px var(--accent2-soft);
 }
 
 .btn-primary:hover {
-  background: var(--copper-deep);
+  background: var(--accent2-deep);
   transform: translateY(-1px);
 }
 
@@ -307,18 +377,18 @@ body {
 }
 
 .btn-secondary {
-  background: var(--surface);
-  color: var(--ink);
-  border-color: var(--border);
+  background: transparent;
+  color: var(--accent1);
+  border-color: var(--accent1);
 }
 
 .btn-secondary:hover {
-  border-color: var(--line-blue);
-  color: var(--line-blue);
+  background: var(--accent1-soft);
 }
 
 .btn-secondary:disabled {
   color: var(--muted);
+  border-color: var(--border);
   cursor: not-allowed;
 }
 
@@ -338,7 +408,7 @@ body {
 }
 
 .back-link:hover {
-  color: var(--line-blue);
+  color: var(--accent1);
 }
 
 .back-link:focus-visible {
@@ -383,7 +453,7 @@ body {
   align-items: center;
   gap: var(--space-1);
   padding: var(--space-1);
-  border: 1px solid var(--border);
+  border: 1.5px dashed var(--border);
   border-radius: 4px;
   background: var(--ground);
   cursor: pointer;
@@ -393,7 +463,7 @@ body {
 }
 
 .template-card:hover {
-  border-color: var(--copper);
+  border-color: var(--accent2);
 }
 
 .template-card:focus-visible {
@@ -402,8 +472,8 @@ body {
 }
 
 .template-card.selected {
-  border-color: var(--copper);
-  box-shadow: 0 0 0 1px var(--copper);
+  border-color: var(--accent2);
+  box-shadow: 0 0 0 1px var(--accent2);
 }
 
 .template-thumb {
@@ -453,7 +523,7 @@ body {
   padding: var(--space-3);
   border: 1px solid var(--border);
   border-radius: 6px;
-  background-image: radial-gradient(circle, var(--line-blue-soft) 1px, transparent 1px);
+  background-image: radial-gradient(circle, var(--accent1-soft) 1px, transparent 1px);
   background-size: 22px 22px;
 }
 
@@ -493,8 +563,8 @@ body {
 }
 
 .zoom-btn:hover {
-  border-color: var(--copper);
-  color: var(--copper);
+  border-color: var(--accent2);
+  color: var(--accent2);
 }
 
 .zoom-btn:focus-visible {
@@ -520,7 +590,7 @@ body {
 }
 
 .zoom-level:hover {
-  color: var(--copper);
+  color: var(--accent2);
 }
 
 .zoom-level:focus-visible {
@@ -556,7 +626,7 @@ body {
   inset: 0;
   pointer-events: none;
   mix-blend-mode: color;
-  background-color: var(--copper);
+  background-color: var(--accent2);
   opacity: 0;
   -webkit-mask-size: 100% 100%;
   mask-size: 100% 100%;
@@ -569,7 +639,7 @@ body {
   inset: 0;
   pointer-events: none;
   mix-blend-mode: normal;
-  background-color: var(--copper);
+  background-color: var(--accent2);
   opacity: 0;
   -webkit-mask-size: 100% 100%;
   mask-size: 100% 100%;
@@ -606,7 +676,7 @@ body {
 .logo-select {
   position: absolute;
   inset: -6px;
-  border: 1.5px dashed var(--copper);
+  border: 1.5px dashed var(--accent2);
   border-radius: 2px;
 }
 
@@ -614,7 +684,7 @@ body {
   position: absolute;
   width: 9px;
   height: 9px;
-  background: var(--copper);
+  background: var(--accent2);
   border-radius: 1px;
   cursor: nwse-resize;
 }
@@ -671,13 +741,13 @@ body {
 }
 
 .color-swatch.active {
-  border-color: var(--copper);
-  box-shadow: 0 0 0 2px var(--surface), 0 0 0 3px var(--copper);
+  border-color: var(--accent2);
+  box-shadow: 0 0 0 2px var(--surface), 0 0 0 3px var(--accent2);
 }
 
 input.color-swatch.custom {
   border: none;
-  background: conic-gradient(from 0deg, #c1662e, #2b5c8a, #1a7f37, #c1662e);
+  background: conic-gradient(from 0deg, var(--accent2), var(--accent1), var(--color-success), var(--accent2));
 }
 
 .range-row {
@@ -695,7 +765,7 @@ input.color-swatch.custom {
 
 .range-row input[type="range"] {
   width: 100%;
-  accent-color: var(--copper);
+  accent-color: var(--accent2);
 }
 
 .dropzone {
@@ -715,7 +785,7 @@ input.color-swatch.custom {
 .dropzone svg {
   width: 20px;
   height: 20px;
-  color: var(--line-blue);
+  color: var(--accent1);
 }
 
 .logo-chip {
@@ -746,7 +816,7 @@ input.color-swatch.custom {
 .logo-chip-thumb svg {
   width: 16px;
   height: 16px;
-  color: var(--copper);
+  color: var(--accent2);
 }
 
 .logo-chip-name {
@@ -769,7 +839,7 @@ input.color-swatch.custom {
 }
 
 .logo-chip-remove:hover {
-  color: var(--copper);
+  color: var(--accent2);
 }
 
 .tool-hint {
@@ -797,7 +867,7 @@ input.color-swatch.custom {
   border-radius: 4px;
   background: var(--ground);
   color: var(--ink);
-  font-family: ui-monospace, monospace;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
   font-size: 0.72rem;
   line-height: 1.4;
   white-space: pre-wrap;
@@ -822,7 +892,7 @@ input.color-swatch.custom {
 }
 
 .size-option:hover {
-  border-color: var(--copper);
+  border-color: var(--accent2);
 }
 
 .size-option:focus-visible {
@@ -831,8 +901,8 @@ input.color-swatch.custom {
 }
 
 .size-option.active {
-  border-color: var(--copper);
-  background: var(--copper-soft);
+  border-color: var(--accent2);
+  background: var(--accent2-soft);
   font-weight: 600;
 }
 
