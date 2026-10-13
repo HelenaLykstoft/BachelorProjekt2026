@@ -1,4 +1,23 @@
+# Dependencies
 node_modules/
+
+# Local app data (database + user uploads)
 data/
 uploads/
 .server.pid
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Editor / tool settings (personal)
+.idea/
+.vscode/
+.claude/settings.local.json
+BA projekt - obsidian/.obsidian/workspace.json
+
+# Logs and OS files
+*.log
+.DS_Store
+Thumbs.db

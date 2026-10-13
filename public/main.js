@@ -1,3 +1,8 @@
+/* ================================================================
+   NAVIGATION — views, theme, top-level nav buttons
+   ================================================================ */
+
+/* ---- Views & routing ---- */
 const views = {
   landing: document.getElementById('view-landing'),
   choice: document.getElementById('view-choice'),
@@ -13,6 +18,7 @@ const titleBlockEl = document.querySelector('.title-block');
 /* ---- Theme toggle (dark by default) ---- */
 const themeToggleBtn = document.getElementById('theme-toggle');
 
+// Syncs the toggle button's label/state with the current <html data-theme>.
 function updateThemeToggleLabel() {
   const isLight = document.documentElement.getAttribute('data-theme') === 'light';
   themeToggleBtn.textContent = isLight ? 'Dark mode' : 'Light mode';
@@ -33,19 +39,23 @@ themeToggleBtn.addEventListener('click', () => {
 
 updateThemeToggleLabel();
 
+// Shows one view, hides the rest; widens the shared .screen shell for the editor only.
 function showView(name) {
   Object.entries(views).forEach(([key, el]) => {
     el.hidden = key !== name;
   });
   screenEl.classList.toggle('screen-wide', name === 'editor');
   titleBlockEl.classList.toggle('title-block-wide', name === 'editor');
+  document.getElementById('project-tag').hidden = name !== 'editor';
 }
 
+// Shared status-line helper (used by every async action across the app).
 function setStatus(el, message, kind) {
   el.textContent = message;
   el.className = `status status-${kind}`;
 }
 
+/* ---- Top-level nav buttons ---- */
 document.getElementById('start-btn').addEventListener('click', () => showView('choice'));
 document.getElementById('choice-upload').addEventListener('click', () => {
   uploadContinueBtn.hidden = true;
@@ -59,6 +69,10 @@ document.getElementById('choice-existing').addEventListener('click', () => {
 document.querySelectorAll('[data-back]').forEach((btn) => {
   btn.addEventListener('click', () => showView(btn.dataset.back));
 });
+
+/* ================================================================
+   TEMPLATES & SKINS — upload, browse, and pick a skin to resume
+   ================================================================ */
 
 /* ---- Upload template ---- */
 const form = document.getElementById('upload-form');
@@ -117,6 +131,7 @@ const existingContinueBtn = document.getElementById('existing-continue-btn');
 let selectedCard = null;
 let selectedTemplate = null;
 
+// Builds one clickable card per template and resets the selection state.
 function renderTemplates(templates) {
   listEl.innerHTML = '';
   emptyEl.hidden = templates.length > 0;
@@ -159,6 +174,7 @@ function renderTemplates(templates) {
   });
 }
 
+// Fetches all templates and renders them into the picker list.
 async function loadTemplates() {
   const response = await fetch('/api/templates');
   const templates = await response.json();
@@ -177,6 +193,7 @@ const editsGridEl = document.getElementById('edits-grid');
 const newEditCard = document.getElementById('new-edit-card');
 let templateForEdits = null;
 
+// Shows the "choose a skin" screen for one template, listing its saved skins.
 async function openEditPicker(template) {
   templateForEdits = template;
   editsHeadingEl.textContent = `${template.name} — choose a skin`;
@@ -218,8 +235,11 @@ newEditCard.addEventListener('click', () => {
   }
 });
 
-/* ---- Editor: shared state ---- */
-const projectTagEl = document.getElementById('project-tag');
+/* ================================================================
+   EDITOR
+   ================================================================ */
+
+/* ---- State & lifecycle ---- */
 const projectTagNameEl = document.getElementById('project-tag-name');
 const editorPreviewEl = document.getElementById('editor-preview');
 const skinNameInput = document.getElementById('skin-name-input');
@@ -230,6 +250,7 @@ let currentTemplateId = null;
 let currentTemplateName = '';
 let currentSkinId = null;
 
+// Refreshes the "TemplateName — SkinName" pill in the title bar.
 function updateProjectTag() {
   const skinName = skinNameInput.value.trim();
   projectTagNameEl.textContent = skinName ? `${currentTemplateName} — ${skinName}` : currentTemplateName;
@@ -237,6 +258,17 @@ function updateProjectTag() {
 
 skinNameInput.addEventListener('input', updateProjectTag);
 
+// Masks every fabric-effect layer (tint/overlay/grain) to the template's own
+// alpha shape, so effects respect transparency (used only from openEditor).
+function applyTemplateMask(url) {
+  const maskUrl = `url(${url})`;
+  [colorTintEl, colorOverlayEl, grainLayerEl].forEach((el) => {
+    el.style.webkitMaskImage = maskUrl;
+    el.style.maskImage = maskUrl;
+  });
+}
+
+// Resets and opens the editor for a template, optionally loading a saved skin.
 async function openEditor(template, skin) {
   currentTemplateId = template.id;
   currentTemplateName = template.name;
@@ -246,12 +278,7 @@ async function openEditor(template, skin) {
   editorPreviewEl.src = template.url;
   editorPreviewEl.alt = template.name;
 
-  colorTintEl.style.webkitMaskImage = `url(${template.url})`;
-  colorTintEl.style.maskImage = `url(${template.url})`;
-  colorOverlayEl.style.webkitMaskImage = `url(${template.url})`;
-  colorOverlayEl.style.maskImage = `url(${template.url})`;
-  grainLayerEl.style.webkitMaskImage = `url(${template.url})`;
-  grainLayerEl.style.maskImage = `url(${template.url})`;
+  applyTemplateMask(template.url);
 
   setTintColor('#3c5670');
   intensityInput.value = 0;
@@ -271,8 +298,6 @@ async function openEditor(template, skin) {
   saveStatusEl.textContent = '';
 
   updateProjectTag();
-  projectTagEl.hidden = false;
-
   showView('editor');
 
   if (skin) {
@@ -299,7 +324,7 @@ async function openEditor(template, skin) {
   }
 }
 
-/* ---- Base color ---- */
+/* ---- Coloring (base color) ---- */
 const colorTintEl = document.getElementById('color-tint');
 const colorOverlayEl = document.getElementById('color-overlay');
 const intensityInput = document.getElementById('intensity-input');
@@ -309,12 +334,14 @@ const swatchButtons = document.querySelectorAll('.color-swatch[data-color]');
 
 let currentColorHex = '#3c5670';
 
+// Highlights the swatch button matching the current color, if any.
 function setActiveSwatch(color) {
   swatchButtons.forEach((btn) => {
     btn.classList.toggle('active', color !== '' && btn.dataset.color.toLowerCase() === color.toLowerCase());
   });
 }
 
+// Sets the working color and pushes it onto both fabric layers.
 function setTintColor(color) {
   currentColorHex = color;
   colorTintEl.style.backgroundColor = color;
@@ -330,13 +357,22 @@ function setTintColor(color) {
 // now ramps in across the whole 0-100% range instead of only above 50%,
 // squared so it still stays gentle at low intensity and only fully takes
 // over — reaching a flat, fully opaque color, e.g. true white — at 100%.
+// Shared by the live CSS preview (applyIntensity) and the PNG export
+// (renderSkinToCanvas) so the two can't drift apart.
+function intensityToOpacities(value) {
+  return { tint: value / 100, overlay: (value / 100) ** 2 };
+}
+
+// Recomputes tint + overlay opacity from the intensity slider.
 function applyIntensity() {
   const value = Number(intensityInput.value);
-  colorTintEl.style.opacity = String(value / 100);
-  colorOverlayEl.style.opacity = String((value / 100) ** 2);
+  const { tint, overlay } = intensityToOpacities(value);
+  colorTintEl.style.opacity = String(tint);
+  colorOverlayEl.style.opacity = String(overlay);
   intensityValueEl.textContent = `${value}%`;
 }
 
+// Picking a color at 0% intensity would be invisible, so nudge it up.
 function bumpIntensityIfZero() {
   if (Number(intensityInput.value) === 0) {
     intensityInput.value = 50;
@@ -358,7 +394,7 @@ customColorInput.addEventListener('input', () => {
 
 intensityInput.addEventListener('input', applyIntensity);
 
-/* ---- Adjustments: fade + texture ---- */
+/* ---- Pattern (fade + texture) ---- */
 const fadeInput = document.getElementById('fade-input');
 const fadeValueEl = document.getElementById('fade-value');
 const grainInput = document.getElementById('grain-input');
@@ -397,6 +433,7 @@ const TEXTURES = {
 
 let currentTexture = 'grain';
 
+// Swaps the active texture pattern (grain / weave / scuffed) on the grain layer.
 function setTexture(type) {
   currentTexture = TEXTURES[type] ? type : 'grain';
   const texture = TEXTURES[currentTexture];
@@ -407,6 +444,7 @@ function setTexture(type) {
   });
 }
 
+// Recomputes texture opacity from the texture-strength slider.
 function applyGrain() {
   const value = Number(grainInput.value);
   grainLayerEl.style.opacity = String(value / 100);
@@ -420,12 +458,16 @@ textureButtons.forEach((btn) => {
 });
 
 /* ---- Canvas size ---- */
-const sizeButtons = document.querySelectorAll('.size-option');
+// Texture buttons also carry .size-option for shared styling, so this must
+// exclude them — otherwise clicking a texture also fires setCanvasSize with
+// no data-w/data-h and corrupts canvasSize to NaN.
+const sizeButtons = document.querySelectorAll('.size-option:not(.texture-option)');
 const sizeWidthInput = document.getElementById('size-width-input');
 const sizeHeightInput = document.getElementById('size-height-input');
 const sizeHintEl = document.getElementById('size-hint');
 let canvasSize = { width: 2048, height: 2048 };
 
+// Sets the export canvas size and syncs the inputs/preset buttons to match.
 function setCanvasSize(width, height) {
   canvasSize = { width, height };
   sizeWidthInput.value = width;
@@ -442,6 +484,7 @@ sizeButtons.forEach((btn) => {
   });
 });
 
+// Reads and clamps the free-typed width/height inputs, then applies them.
 function onSizeInputChange() {
   const width = clamp(Math.round(Number(sizeWidthInput.value) || 0), 16, 8192);
   const height = clamp(Math.round(Number(sizeHeightInput.value) || 0), 16, 8192);
@@ -466,10 +509,12 @@ let logoAspect = 1;
 let pendingLogoFile = null;
 let logoServerUrl = null;
 
+// Small generic utility, used across Logo, Canvas size, and Zoom.
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
 }
 
+// Pushes logoState (x/y/w, all % of canvas) onto the logo element's CSS.
 function applyLogoStyle() {
   logoWrapper.style.left = `${logoState.x}%`;
   logoWrapper.style.top = `${logoState.y}%`;
@@ -477,6 +522,8 @@ function applyLogoStyle() {
   logoWrapper.style.aspectRatio = `1 / ${logoAspect}`;
 }
 
+// Drives a drag-to-move or corner-resize gesture on the logo, each corner
+// handle anchoring the diagonally-opposite corner while resizing.
 function startLogoInteraction(event, mode, handle) {
   event.preventDefault();
 
@@ -530,6 +577,7 @@ function startLogoInteraction(event, mode, handle) {
   window.addEventListener('pointerup', onUp);
 }
 
+// Creates (or replaces) the draggable/resizable logo element on the canvas.
 function placeLogo(url, name, position) {
   if (logoWrapper) {
     logoWrapper.remove();
@@ -552,7 +600,7 @@ function placeLogo(url, name, position) {
   canvasSurface.appendChild(logoWrapper);
   applyLogoStyle();
 
-  logoWrapper.querySelector('.logo-img').addEventListener('pointerdown', (event) => {
+  logoWrapper.addEventListener('pointerdown', (event) => {
     startLogoInteraction(event, 'move');
   });
   logoWrapper.querySelectorAll('.handle').forEach((handle) => {
@@ -567,6 +615,7 @@ function placeLogo(url, name, position) {
   logoChipNameEl.textContent = name;
 }
 
+// Clears any logo, freeing its object URL and restoring the dropzone.
 function resetLogo() {
   if (logoObjectUrl) {
     URL.revokeObjectURL(logoObjectUrl);
@@ -584,6 +633,7 @@ function resetLogo() {
   logoInput.value = '';
 }
 
+// Accepts a newly picked/dropped logo file and places it at the default spot.
 function handleLogoFile(file) {
   if (file.type !== 'image/png') {
     return;
@@ -604,6 +654,7 @@ function handleLogoFile(file) {
   probe.src = logoObjectUrl;
 }
 
+// Loads a previously saved logo (from a resumed skin) into the editor.
 function restoreLogo(logo) {
   const probe = new Image();
   probe.onload = () => {
@@ -638,6 +689,7 @@ const copyPromptBtn = document.getElementById('copy-prompt-btn');
 const copyPromptStatusEl = document.getElementById('copy-prompt-status');
 let aiPromptText = null;
 
+// Fetches the prompt text once and caches it for repeat "Copy prompt" clicks.
 async function getAiPromptText() {
   if (aiPromptText === null) {
     const response = await fetch('/ai-prompt.md');
@@ -674,6 +726,10 @@ const ZOOM_MAX = 3;
 const ZOOM_STEP = 0.25;
 let canvasZoom = 1;
 
+// Applies canvasZoom to the canvas surface and updates the zoom control state.
+// Uses transform: scale(), not CSS `zoom` — `zoom` silently no-ops here
+// because the canvas is sized via a chain of shrink-to-fit/percentage
+// layout, while `transform` is paint-only and doesn't fight that.
 function applyZoom() {
   canvasSurface.style.transform = `scale(${canvasZoom})`;
   zoomLevelBtn.textContent = `${Math.round(canvasZoom * 100)}%`;
@@ -681,6 +737,7 @@ function applyZoom() {
   zoomOutBtn.disabled = canvasZoom <= ZOOM_MIN;
 }
 
+// Clamps and applies a new zoom level (buttons, reset-to-100%, Ctrl+wheel).
 function setZoom(value) {
   canvasZoom = clamp(value, ZOOM_MIN, ZOOM_MAX);
   applyZoom();
@@ -701,6 +758,8 @@ canvasPaneEl.addEventListener('wheel', (event) => {
 }, { passive: false });
 
 /* ---- Save skin ---- */
+// Uploads a pending logo file if needed, then POSTs (new) or PUTs (resumed)
+// the current skin state to /api/projects.
 saveBtn.addEventListener('click', async () => {
   const name = skinNameInput.value.trim();
   if (!name) {
@@ -778,9 +837,11 @@ saveBtn.addEventListener('click', async () => {
   }
 });
 
-/* ---- Download flattened PNG ---- */
+/* ---- Export (download flattened PNG) ---- */
 const downloadBtn = document.getElementById('download-btn');
 
+// Promise wrapper around Image loading, used for both the template and the
+// texture pattern when re-rendering the composite for export.
 function loadImageEl(src) {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -814,6 +875,8 @@ function compositeMaskedLayer(targetCtx, templateImg, width, height, alpha, blen
   targetCtx.restore();
 }
 
+// Flattens the live editor composite to an offscreen canvas at full export
+// size, replicating the CSS layer stack (tint/overlay/grain/fade/logo).
 async function renderSkinToCanvas() {
   const { width, height } = canvasSize;
   const templateImg = await loadImageEl(editorPreviewEl.src);
@@ -825,11 +888,12 @@ async function renderSkinToCanvas() {
   ctx.drawImage(templateImg, 0, 0, width, height);
 
   const intensity = Number(intensityInput.value);
-  compositeMaskedLayer(ctx, templateImg, width, height, intensity / 100, 'color', (layerCtx) => {
+  const { tint, overlay } = intensityToOpacities(intensity);
+  compositeMaskedLayer(ctx, templateImg, width, height, tint, 'color', (layerCtx) => {
     layerCtx.fillStyle = currentColorHex;
     layerCtx.fillRect(0, 0, width, height);
   });
-  compositeMaskedLayer(ctx, templateImg, width, height, (intensity / 100) ** 2, 'source-over', (layerCtx) => {
+  compositeMaskedLayer(ctx, templateImg, width, height, overlay, 'source-over', (layerCtx) => {
     layerCtx.fillStyle = currentColorHex;
     layerCtx.fillRect(0, 0, width, height);
   });

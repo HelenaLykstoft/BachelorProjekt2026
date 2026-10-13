@@ -1,7 +1,7 @@
 {
-  "name": "fivem-logo-app",
+  "name": "fivem-skin-studio",
   "version": "1.0.0",
-  "description": "Local web app: generate an AI logo and composite it onto a clothing template PNG",
+  "description": "Local web app for skinning FiveM clothing templates: upload a template, place a logo, set colors/texture, and export a PNG",
   "main": "server.js",
   "type": "commonjs",
   "engines": {
@@ -13,8 +13,6 @@
   },
   "dependencies": {
     "express": "^4.19.2",
-    "dotenv": "^16.4.5",
-    "node-fetch": "^2.7.0",
     "multer": "^1.4.5-lts.1"
   }
 }

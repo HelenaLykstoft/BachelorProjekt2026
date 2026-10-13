@@ -18,6 +18,8 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// ---- Uploads (templates + logos share the same PNG-only rules) ----
+
 function pngFileFilter(req, file, cb) {
   const isPng = file.mimetype === 'image/png'
     && path.extname(file.originalname).toLowerCase() === '.png';
@@ -40,21 +42,33 @@ const uploadLogo = multer({
   limits: { fileSize: 10 * 1024 * 1024 }
 });
 
+// Shared multer-error → user-facing-message mapping for both upload routes.
+// Returns true (and has already responded) if there was a problem.
+function respondIfUploadFailed(req, res, err) {
+  if (err) {
+    const message = err.message === 'INVALID_FILE_TYPE'
+      ? 'Only PNG files are accepted. Please choose a .png file.'
+      : 'The file is too large or could not be uploaded. Please try again.';
+    res.status(400).json({ success: false, message });
+    return true;
+  }
+  if (!req.file) {
+    res.status(400).json({ success: false, message: 'No file was received. Please choose a PNG file.' });
+    return true;
+  }
+  return false;
+}
+
+// ---- Templates ----
+
 app.get('/api/templates', (req, res) => {
   res.json(db.listTemplates());
 });
 
 app.post('/api/templates', (req, res) => {
   upload.single('template')(req, res, (err) => {
-    if (err) {
-      const message = err.message === 'INVALID_FILE_TYPE'
-        ? 'Only PNG files are accepted. Please choose a .png file.'
-        : 'The file is too large or could not be uploaded. Please try again.';
-      return res.status(400).json({ success: false, message });
-    }
-
-    if (!req.file) {
-      return res.status(400).json({ success: false, message: 'No file was received. Please choose a PNG file.' });
+    if (respondIfUploadFailed(req, res, err)) {
+      return;
     }
 
     const name = (req.body.name || '').trim() || req.file.originalname.replace(/\.png$/i, '');
@@ -74,17 +88,12 @@ app.post('/api/templates', (req, res) => {
   });
 });
 
+// ---- Logos ----
+
 app.post('/api/logos', (req, res) => {
   uploadLogo.single('logo')(req, res, (err) => {
-    if (err) {
-      const message = err.message === 'INVALID_FILE_TYPE'
-        ? 'Only PNG files are accepted. Please choose a .png file.'
-        : 'The file is too large or could not be uploaded. Please try again.';
-      return res.status(400).json({ success: false, message });
-    }
-
-    if (!req.file) {
-      return res.status(400).json({ success: false, message: 'No file was received. Please choose a PNG file.' });
+    if (respondIfUploadFailed(req, res, err)) {
+      return;
     }
 
     res.status(201).json({
@@ -98,6 +107,8 @@ app.post('/api/logos', (req, res) => {
   });
 });
 
+// ---- Skins (the API path stayed "/api/projects" for continuity; see db.js) ----
+
 function validateSkinPayload(body) {
   if (!body.name || !body.name.trim()) {
     return 'Please name this skin before saving.';
@@ -109,6 +120,20 @@ function validateSkinPayload(body) {
     return 'Missing or invalid canvas size.';
   }
   return null;
+}
+
+// Shared shape for both create (POST) and update (PUT) — only id/templateId differ.
+function buildSkinRecord(body) {
+  return {
+    name: body.name.trim(),
+    color: body.color,
+    fade: typeof body.fade === 'number' ? body.fade : 0,
+    textureType: typeof body.textureType === 'string' ? body.textureType : 'grain',
+    grain: typeof body.grain === 'number' ? body.grain : 0,
+    logo: body.logo || null,
+    canvasSize: body.canvasSize,
+    updatedAt: new Date().toISOString()
+  };
 }
 
 app.get('/api/projects', (req, res) => {
@@ -136,14 +161,7 @@ app.post('/api/projects', (req, res) => {
   const record = {
     id: Date.now(),
     templateId: String(req.body.templateId),
-    name: req.body.name.trim(),
-    color: req.body.color,
-    fade: typeof req.body.fade === 'number' ? req.body.fade : 0,
-    textureType: typeof req.body.textureType === 'string' ? req.body.textureType : 'grain',
-    grain: typeof req.body.grain === 'number' ? req.body.grain : 0,
-    logo: req.body.logo || null,
-    canvasSize: req.body.canvasSize,
-    updatedAt: new Date().toISOString()
+    ...buildSkinRecord(req.body)
   };
 
   const saved = db.insertSkin(db.DEFAULT_USER_ID, record);
@@ -157,17 +175,7 @@ app.put('/api/projects/:id', (req, res) => {
     return res.status(400).json({ success: false, message: error });
   }
 
-  const record = {
-    name: req.body.name.trim(),
-    color: req.body.color,
-    fade: typeof req.body.fade === 'number' ? req.body.fade : 0,
-    textureType: typeof req.body.textureType === 'string' ? req.body.textureType : 'grain',
-    grain: typeof req.body.grain === 'number' ? req.body.grain : 0,
-    logo: req.body.logo || null,
-    canvasSize: req.body.canvasSize,
-    updatedAt: new Date().toISOString()
-  };
-
+  const record = buildSkinRecord(req.body);
   const saved = db.updateSkin(db.DEFAULT_USER_ID, req.params.id, record);
   if (!saved) {
     return res.status(404).json({ success: false, message: 'Skin not found.' });
@@ -175,6 +183,8 @@ app.put('/api/projects/:id', (req, res) => {
 
   res.json({ success: true, message: `"${saved.name}" was saved.`, project: saved });
 });
+
+// ---- Startup / shutdown ----
 
 app.listen(PORT, () => {
   fs.writeFileSync(PID_FILE, String(process.pid));

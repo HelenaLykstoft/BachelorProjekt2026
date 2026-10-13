@@ -663,6 +663,7 @@ body {
 .logo-mark {
   position: absolute;
   cursor: move;
+  touch-action: none;
 }
 
 .logo-img {
