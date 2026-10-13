@@ -2,6 +2,10 @@
 
 A web app that makes skinning FiveM clothing faster. Upload a clothing template, add color, texture and a logo, and export the result as a PNG.
 
+Video link: 
+
+https://github.com/user-attachments/assets/e3abfbc3-895c-4c9d-8c4a-0f74c3f86162
+
 Bachelor project, 2026.
 
 ## Features
